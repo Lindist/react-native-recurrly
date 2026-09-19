@@ -8,9 +8,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const tabBar = components.tabBar;
 
+/** Configures bottom-tab navigation with a safe-area-aware tab bar. */
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
 
+  /** Renders a tab icon with a highlighted pill when its tab is focused. */
   const TabIcon = ({ focused, icon }: TabIconProps) => {
     return (
       <View className="tabs-icon">

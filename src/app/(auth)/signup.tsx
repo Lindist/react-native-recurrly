@@ -6,6 +6,7 @@ import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/** Renders the sign-up route with links to sign-in and home. */
 const Signup = () => {
   return (
     <SafeAreaView className="flex-1 p-5 bg-background">
