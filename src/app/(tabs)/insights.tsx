@@ -5,13 +5,13 @@ import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
-/** Renders the placeholder content for the Subscriptions tab. */
-const subscriptions = () => {
+/** Renders the placeholder content for the Insights tab. */
+const insights = () => {
   return (
     <SafeAreaView className="flex-1 p-5 bg-background">
-      <Text>subscriptions</Text>
+      <Text>insights</Text>
     </SafeAreaView>
   )
 }
 
-export default subscriptions
+export default insights
