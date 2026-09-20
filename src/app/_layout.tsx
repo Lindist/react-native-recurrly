@@ -1,7 +1,10 @@
-import { SplashScreen, Stack } from "expo-router";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import "../../global.css";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
+
+SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -17,16 +20,16 @@ export default function RootLayout() {
     'sans-light': require('@/assets/fonts/PlusJakartaSans-Light.ttf')
   })
 
-  if(!fontsLoaded) {
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hide();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
     return null;
   }
 
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-  
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
