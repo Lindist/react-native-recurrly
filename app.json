@@ -32,7 +32,17 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      ["expo-font", {
+        "fonts":[
+          "./assets/fonts/PlusJakertaSans-Regular.ttf",
+          "./assets/fonts/PlusJakertaSans-Bold.ttf",
+          "./assets/fonts/PlusJakertaSans-Medium.ttf",
+          "./assets/fonts/PlusJakertaSans-SemiBold.ttf",
+          "./assets/fonts/PlusJakertaSans-ExtraBold.ttf",
+          "./assets/fonts/PlusJakertaSans-Light.ttf"
+        ]
+      }]
     ],
     "experiments": {
       "typedRoutes": true,
