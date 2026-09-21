@@ -83,6 +83,12 @@ export default function RootLayout() {
     SystemUI.setBackgroundColorAsync(colors.background);
   }, []);
 
+  useEffect(() => {
+    if (fontsLoaded && !publishableKey) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, publishableKey]);
+
   if (!fontsLoaded) {
     return null;
   }
