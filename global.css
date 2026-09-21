@@ -4,6 +4,14 @@
 
 @import "nativewind/theme";
 
+@layer base {
+    html,
+    body,
+    #root {
+        background-color: #fff9e3;
+    }
+}
+
 @theme {
     --color-background: #fff9e3;
     --color-foreground: #081126;

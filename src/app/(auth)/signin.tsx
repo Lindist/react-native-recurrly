@@ -1,24 +1,123 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { useSignIn } from "@clerk/expo/legacy";
 import { Link } from "expo-router";
-import { styled } from "nativewind";
-import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
+import { Pressable, Text, View } from "react-native";
+import {
+  AuthButton,
+  AuthShell,
+  AuthTextInput,
+  getClerkFieldErrors,
+  isValidEmail,
+  normalizeEmail,
+  PasswordField,
+  type AuthFieldErrors,
+} from "@/components/auth/AuthForm";
 
-const SafeAreaView = styled(RNSafeAreaView);
+export default function SignIn() {
+  const { signIn, setActive, isLoaded } = useSignIn();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [errors, setErrors] = useState<AuthFieldErrors>({});
+  const [submitting, setSubmitting] = useState(false);
 
-/** Renders the sign-in route with links to sign-up and home. */
-const Signin = () => {
+  async function handleSignIn() {
+    const nextErrors: AuthFieldErrors = {};
+    const emailAddress = normalizeEmail(email);
+
+    if (!isValidEmail(emailAddress)) {
+      nextErrors.email = "Enter a valid email address.";
+    }
+
+    if (!password) {
+      nextErrors.password = "Enter your password.";
+    }
+
+    setErrors(nextErrors);
+
+    if (nextErrors.email || nextErrors.password || !isLoaded) {
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const result = await signIn.create({
+        identifier: emailAddress,
+        password,
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        return;
+      }
+
+      setErrors({
+        form: "This account needs another sign-in step. Open your account settings to enable email and password access.",
+      });
+    } catch (error) {
+      setErrors(getClerkFieldErrors(error));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
-    <SafeAreaView className="flex-1 p-5 bg-background">
-      <Text>signin</Text>
-      <Link href="/(auth)/signup" className="mt-4 rounded bg-success px-4 py-2">
-        <Text className="text-white">Go to Signup</Text>
-      </Link>
-      <Link href="/" className="mt-4 rounded bg-black px-4 py-2">
-        <Text className="text-white">Back to Home</Text>
-      </Link>
-    </SafeAreaView>
-  )
-}
+    <AuthShell
+      title="Welcome back"
+      subtitle="Sign in to continue managing your subscriptions"
+    >
+      <View className="auth-form">
+        <AuthTextInput
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          error={errors.email}
+          inputMode="email"
+          keyboardType="email-address"
+          label="Email"
+          onChangeText={(value) => {
+            setEmail(value);
+            setErrors((current) => ({ ...current, email: undefined, form: undefined }));
+          }}
+          onSubmitEditing={handleSignIn}
+          placeholder="Enter your email"
+          returnKeyType="next"
+          textContentType="emailAddress"
+          value={email}
+        />
 
-export default Signin
+        <PasswordField
+          error={errors.password}
+          onChangeText={(value) => {
+            setPassword(value);
+            setErrors((current) => ({ ...current, password: undefined, form: undefined }));
+          }}
+          onToggleVisible={() => setPasswordVisible((current) => !current)}
+          placeholder="Enter your password"
+          value={password}
+          visible={passwordVisible}
+        />
+
+        {errors.form ? <Text className="auth-error">{errors.form}</Text> : null}
+
+        <AuthButton
+          disabled={!email || !password || !isLoaded}
+          loading={submitting}
+          onPress={handleSignIn}
+        >
+          Sign in
+        </AuthButton>
+      </View>
+
+      <View className="auth-link-row">
+        <Text className="auth-link-copy">New to Recurly?</Text>
+        <Link href="/(auth)/signup" asChild>
+          <Pressable>
+            <Text className="auth-link">Create an account</Text>
+          </Pressable>
+        </Link>
+      </View>
+    </AuthShell>
+  );
+}
