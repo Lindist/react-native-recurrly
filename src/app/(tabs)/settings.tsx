@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import images from "@/constants/images";
+import { posthog } from "@/lib/posthog";
 
 export default function Settings() {
   const { signOut } = useClerk();
@@ -17,6 +18,8 @@ export default function Settings() {
 
     try {
       await signOut();
+      posthog?.capture("user_signed_out");
+      posthog?.reset();
     } finally {
       setSigningOut(false);
     }

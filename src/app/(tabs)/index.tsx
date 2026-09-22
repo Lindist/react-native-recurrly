@@ -11,6 +11,7 @@ import ListHeading from "@/components/ListHeading";
 import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import { useState } from "react";
+import { posthog } from "@/lib/posthog";
 
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -66,9 +67,16 @@ export default function App() {
           <SubscriptionCard
             {...item} 
             expanded={expandedSubscriptionId === item.id} 
-            onPress={() => setExpandedSubscriptionId((currentId) =>
-              (currentId === item.id ? null : item.id)
-            )}
+            onPress={() => {
+              const isExpanding = expandedSubscriptionId !== item.id;
+              setExpandedSubscriptionId((currentId) =>
+                (currentId === item.id ? null : item.id)
+              );
+
+              if (isExpanding) {
+                posthog?.capture("subscription_expanded");
+              }
+            }}
           />
         )}
         extraData={expandedSubscriptionId}

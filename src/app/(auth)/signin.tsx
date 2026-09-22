@@ -12,6 +12,7 @@ import {
   PasswordField,
   type AuthFieldErrors,
 } from "@/components/auth/AuthForm";
+import { posthog } from "@/lib/posthog";
 
 export default function SignIn() {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -49,6 +50,7 @@ export default function SignIn() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        posthog?.capture("user_signed_in");
         return;
       }
 

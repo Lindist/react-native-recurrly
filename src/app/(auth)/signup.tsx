@@ -12,6 +12,7 @@ import {
   PasswordField,
   type AuthFieldErrors,
 } from "@/components/auth/AuthForm";
+import { posthog } from "@/lib/posthog";
 
 const minimumPasswordLength = 8;
 
@@ -82,6 +83,7 @@ export default function SignUp() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        posthog?.capture("account_created");
         return;
       }
 
