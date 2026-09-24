@@ -16,6 +16,7 @@ import { icons } from "@/constants/icon";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { components } from "@/constants/theme";
+import { posthog } from "@/lib/posthog";
 
 const CATEGORIES = [
   "Entertainment",
@@ -86,6 +87,12 @@ export default function CreateSubscriptionModal({
 
     onCreate(newSubscription);
 
+    posthog?.capture("subscription_created", {
+      subscription_name: name.trim(),
+      subscription_price: Number(price),
+      subscription_frequency: frequency,
+      subscription_category: category,
+    });
     // Reset form
     setName("");
     setPrice("");
