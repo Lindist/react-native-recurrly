@@ -32,7 +32,7 @@ Create the parent dashboard first with `dashboard-create`, capture its returned 
 {
   "name": "Analytics basics (wizard)",
   "description": "Key views for the events instrumented by the PostHog wizard.",
-  "tags": ["wizard"]
+  "tags": ["(wizard)"]
 }
 ```
 
@@ -132,7 +132,7 @@ Then publish the report to the wizard session with a single `publish_handoff` ca
 
 Then mirror the report into a shareable PostHog notebook so the user has an in-app copy to link and comment on. Call `notebooks-create-markdown` with a `title` (e.g. `PostHog setup (wizard) – <repo_name>`) and the report verbatim as `markdown` — the title becomes the notebook's leading heading, so start the markdown at the first section below it. Take the `short_id` from the response, build the notebook URL as `<host>/project/<project_id>/notebooks/<short_id>`, and emit it on its own line so the wizard can surface it: `[NOTEBOOK_URL]` followed by that URL.
 
-Upon completion, update `.posthog-events.json` so it matches the events you actually implemented, then remove it with your file tools. If removal is blocked or fails in your environment, leave the file in place and move on — the wizard host cleans it up after the run. Do not retry the removal or reach for shell commands to force it.
+Upon completion, update `.posthog-events.json` so it matches the events you actually implemented. Track whether the begin phase created the file, and remove it only when this run created it; preserve any file that existed before the run. If removal is blocked or fails in your environment, leave the file in place and move on — the wizard host cleans it up after the run. Do not retry the removal or reach for shell commands to force it.
 
 ## Status
 

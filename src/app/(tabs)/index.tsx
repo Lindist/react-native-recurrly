@@ -13,6 +13,7 @@ import SubscriptionCard from "@/components/SubscriptionCard";
 import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
 import { useState } from "react";
 import { posthog } from "@/lib/posthog";
+import { useSubscriptions, store } from "@/lib/store";
 
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -21,12 +22,11 @@ const tabBar = components.tabBar;
 /** Renders the home route with links to onboarding, authentication, and subscription details. */
 export default function App() {
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
-  const [subscriptions, setSubscriptions] = useState(HOME_SUBSCRIPTIONS);
+  const subscriptions = useSubscriptions();
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const handleCreateSubscription = (newSub: any) => {
-    HOME_SUBSCRIPTIONS.unshift(newSub);
-    setSubscriptions([...HOME_SUBSCRIPTIONS]);
+  const handleCreateSubscription = (newSub: Subscription) => {
+    store.addSubscription(newSub);
   };
   return (
     <SafeAreaView className="flex-1 p-5 bg-background">

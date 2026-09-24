@@ -10,8 +10,8 @@ import {
 import { styled } from "nativewind";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import SubscriptionCard from "@/components/SubscriptionCard";
-import { HOME_SUBSCRIPTIONS } from "@/constants/data";
 import { colors, components } from "@/constants/theme";
+import { useSubscriptions } from "@/lib/store";
 
 const SafeAreaView = styled(RNSafeAreaView);
 const tabBar = components.tabBar;
@@ -31,15 +31,17 @@ export default function Subscriptions() {
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
   const normalizedQuery = query.trim().toLowerCase();
 
+  const subscriptions = useSubscriptions();
+
   const filteredSubscriptions = useMemo(() => {
     if (!normalizedQuery) {
-      return HOME_SUBSCRIPTIONS;
+      return subscriptions;
     }
 
-    return HOME_SUBSCRIPTIONS.filter((subscription) =>
+    return subscriptions.filter((subscription) =>
       matchesQuery(subscription, normalizedQuery)
     );
-  }, [normalizedQuery]);
+  }, [normalizedQuery, subscriptions]);
 
   return (
     <SafeAreaView className="flex-1 bg-background p-5">

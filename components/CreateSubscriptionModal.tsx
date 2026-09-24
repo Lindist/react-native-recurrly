@@ -60,7 +60,8 @@ export default function CreateSubscriptionModal({
   const tabBar = components.tabBar;
   const safeBottomPadding = tabBar.height + Math.max(insets.bottom, tabBar.horizontalInset) + 20;
 
-  const isValid = name.trim().length > 0 && Number(price) > 0;
+  const normalizedPrice = Number(price.replace(',', '.'));
+  const isValid = name.trim().length > 0 && Number.isFinite(normalizedPrice) && normalizedPrice > 0;
 
   const handleSubmit = () => {
     if (!isValid) return;
@@ -74,7 +75,7 @@ export default function CreateSubscriptionModal({
     const newSubscription = {
       id: Math.random().toString(36).substr(2, 9),
       name: name.trim(),
-      price: Number(price),
+      price: normalizedPrice,
       currency: "USD",
       billing: frequency,
       category,
@@ -89,7 +90,7 @@ export default function CreateSubscriptionModal({
 
     posthog?.capture("subscription_created", {
       subscription_name: name.trim(),
-      subscription_price: Number(price),
+      subscription_price: normalizedPrice,
       subscription_frequency: frequency,
       subscription_category: category,
     });
