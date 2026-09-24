@@ -12,7 +12,9 @@ import {
   PasswordField,
   type AuthFieldErrors,
 } from "@/components/auth/AuthForm";
+import { posthog } from "@/lib/posthog";
 
+/** Renders the sign-in form and records successful sign-ins. */
 export default function SignIn() {
   const { signIn, setActive, isLoaded } = useSignIn();
   const [email, setEmail] = useState("");
@@ -21,6 +23,7 @@ export default function SignIn() {
   const [errors, setErrors] = useState<AuthFieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
+  /** Validates credentials and activates a completed sign-in session. */
   async function handleSignIn() {
     const nextErrors: AuthFieldErrors = {};
     const emailAddress = normalizeEmail(email);
@@ -49,6 +52,7 @@ export default function SignIn() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        posthog?.capture("user_signed_in");
         return;
       }
 

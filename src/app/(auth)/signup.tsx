@@ -12,9 +12,11 @@ import {
   PasswordField,
   type AuthFieldErrors,
 } from "@/components/auth/AuthForm";
+import { posthog } from "@/lib/posthog";
 
 const minimumPasswordLength = 8;
 
+/** Renders account creation and email verification forms. */
 export default function SignUp() {
   const { signUp, setActive, isLoaded } = useSignUp();
   const [email, setEmail] = useState("");
@@ -61,6 +63,7 @@ export default function SignUp() {
     }
   }
 
+  /** Verifies the email code and records a completed account creation. */
   async function handleVerifyEmail() {
     const verificationCode = code.trim();
 
@@ -82,6 +85,7 @@ export default function SignUp() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        posthog?.capture("account_created");
         return;
       }
 

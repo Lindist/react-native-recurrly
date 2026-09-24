@@ -1,4 +1,4 @@
-import { ClerkProvider, useAuth } from "@clerk/expo";
+import { ClerkProvider, useAuth, useUser } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { colors } from "@/constants/theme";
 import { Stack } from "expo-router";
@@ -6,8 +6,10 @@ import * as SplashScreen from "expo-splash-screen";
 import * as SystemUI from "expo-system-ui";
 import "../../global.css";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
+import { PostHogProvider } from "posthog-react-native";
+import { posthog } from "@/lib/posthog";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -36,8 +38,32 @@ function StatusScreen({ title, subtitle }: { title: string; subtitle: string }) 
   );
 }
 
+/** Configures account-aware routes and identifies the signed-in user for analytics. */
 function AppStack({ fontsLoaded }: { fontsLoaded: boolean }) {
   const { isLoaded, isSignedIn } = useAuth();
+  const { user } = useUser();
+  const identifiedUserId = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!user) {
+      identifiedUserId.current = undefined;
+      return;
+    }
+
+    if (identifiedUserId.current === user.id) {
+      return;
+    }
+
+    posthog?.identify(user.id, {
+      $set: {
+        ...(user.primaryEmailAddress?.emailAddress
+          ? { email: user.primaryEmailAddress.emailAddress }
+          : {}),
+        ...(user.fullName ? { name: user.fullName } : {}),
+      },
+    });
+    identifiedUserId.current = user.id;
+  }, [user]);
 
   useEffect(() => {
     if (fontsLoaded && isLoaded) {
@@ -69,6 +95,7 @@ function AppStack({ fontsLoaded }: { fontsLoaded: boolean }) {
   );
 }
 
+/** Loads fonts and configures the Clerk and PostHog providers. */
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     "sans-regular": require("@/assets/fonts/PlusJakartaSans-Regular.ttf"),
@@ -82,6 +109,12 @@ export default function RootLayout() {
   useEffect(() => {
     SystemUI.setBackgroundColorAsync(colors.background);
   }, []);
+
+  useEffect(() => {
+    if (fontsLoaded && !publishableKey) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, publishableKey]);
 
   if (!fontsLoaded) {
     return null;
@@ -99,7 +132,13 @@ export default function RootLayout() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-        <AppStack fontsLoaded={fontsLoaded} />
+        {posthog ? (
+          <PostHogProvider client={posthog}>
+            <AppStack fontsLoaded={fontsLoaded} />
+          </PostHogProvider>
+        ) : (
+          <AppStack fontsLoaded={fontsLoaded} />
+        )}
       </ClerkProvider>
     </View>
   );
