@@ -18,12 +18,13 @@ import { posthog } from "@/lib/posthog";
 const SafeAreaView = styled(RNSafeAreaView);
 const tabBar = components.tabBar;
 
-/** Renders the home route with links to onboarding, authentication, and subscription details. */
+/** Renders the home subscription list and its creation form. */
 export default function App() {
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
   const [subscriptions, setSubscriptions] = useState(HOME_SUBSCRIPTIONS);
   const [isModalVisible, setModalVisible] = useState(false);
 
+  /** Adds a new subscription to the shared list and refreshes the home view. */
   const handleCreateSubscription = (newSub: any) => {
     HOME_SUBSCRIPTIONS.unshift(newSub);
     setSubscriptions([...HOME_SUBSCRIPTIONS]);

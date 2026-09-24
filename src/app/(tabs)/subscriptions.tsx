@@ -16,6 +16,7 @@ import { colors, components } from "@/constants/theme";
 const SafeAreaView = styled(RNSafeAreaView);
 const tabBar = components.tabBar;
 
+/** Checks whether a subscription's name, category, or plan contains the query. */
 function matchesQuery(subscription: Subscription, query: string) {
   const haystack = [subscription.name, subscription.category, subscription.plan]
     .filter(Boolean)

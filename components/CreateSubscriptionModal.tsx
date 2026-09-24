@@ -46,6 +46,7 @@ interface CreateSubscriptionModalProps {
   onCreate: (subscription: any) => void;
 }
 
+/** Renders the form for creating a subscription and passing it to the caller. */
 export default function CreateSubscriptionModal({
   visible,
   onClose,
@@ -62,6 +63,7 @@ export default function CreateSubscriptionModal({
 
   const isValid = name.trim().length > 0 && Number(price) > 0;
 
+  /** Creates a valid subscription, records the event, and clears the form. */
   const handleSubmit = () => {
     if (!isValid) return;
 

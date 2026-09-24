@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import images from "@/constants/images";
 import { posthog } from "@/lib/posthog";
 
+/** Renders account details and the sign-out action. */
 export default function Settings() {
   const { signOut } = useClerk();
   const { user } = useUser();
@@ -13,6 +14,7 @@ export default function Settings() {
   const primaryEmail = user?.primaryEmailAddress?.emailAddress;
   const displayName = user?.fullName || user?.firstName || "Your account";
 
+  /** Signs out the current user and clears the analytics identity. */
   async function handleSignOut() {
     setSigningOut(true);
 

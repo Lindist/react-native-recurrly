@@ -38,6 +38,7 @@ function StatusScreen({ title, subtitle }: { title: string; subtitle: string }) 
   );
 }
 
+/** Configures account-aware routes and identifies the signed-in user for analytics. */
 function AppStack({ fontsLoaded }: { fontsLoaded: boolean }) {
   const { isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
@@ -94,6 +95,7 @@ function AppStack({ fontsLoaded }: { fontsLoaded: boolean }) {
   );
 }
 
+/** Loads fonts and configures the Clerk and PostHog providers. */
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     "sans-regular": require("@/assets/fonts/PlusJakartaSans-Regular.ttf"),
